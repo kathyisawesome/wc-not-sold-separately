@@ -1,7 +1,7 @@
 <?php
 /*
-* Plugin URI: https://woocommerce.com/products/woocommerce-mix-and-match-products/
 * Plugin Name: Not Sold Separately for WooCommerce
+* Plugin URI: https://woocommerce.com/products/woocommerce-mix-and-match-products/
 * Description: Optionally restrict products to sale only as part of Mix and Match or Bundle Product.
 * Version: 0.0.1-beta-1
 * Author: Kathy Darling
