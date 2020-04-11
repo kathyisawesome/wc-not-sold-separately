@@ -133,7 +133,7 @@ class WC_MNM_Not_Sold_Separately {
 			'label'       => __( 'Not sold separately', 'woocommerce-mix-and-match-products' ),
 			'wrapper_class' => 'show_if_simple show_if_variable',
 			'value'       => wc_string_to_bool( $product_object->get_meta( '_not_sold_separately' ) ) ? 'yes' : 'no',
-			'description' => __( 'Enable this to prevent purchase of this product outside of a bundle.', 'wc-mnm-not-sold-separately' ),
+			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'wc-mnm-not-sold-separately' ),
 		) );
 
 	}
