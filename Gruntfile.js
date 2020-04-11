@@ -1,202 +1,83 @@
-/* jshint node:true */
-module.exports = function( grunt ) {
-	'use strict';
+module.exports = function(grunt) {
 
-	const sass = require('node-sass');
-  	require('load-grunt-tasks')(grunt);
+    // load most all grunt tasks
+    require('load-grunt-tasks')(grunt);
 
-	grunt.initConfig({
+    // Project configuration.
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
 
-		pkg: grunt.file.readJSON('package.json'),
+        // Generate git readme from readme.txt
+        wp_readme_to_markdown: {
+            convert: {
+                files: {
+                    'readme.md': 'readme.txt'
+                },
+            },
+        },
 
-		// Setting folder templates.
-		dirs: {
-			css: 'assets/css',
-			js: 'assets/js',
-			scss: 'assets/scss'
-		},
+        // # Internationalization 
 
-		// Compile all .scss files.
-		sass: {
-			compile: {
-				options: {
-					implementation: sass,
-					sourceMap: 'none',
-					require: 'susy'
-				},
-				files: [
-					{
-						expand: true,
-						cwd: '<%= dirs.scss %>',
-						src: ['*.scss'],
-						dest: '<%= dirs.css %>',
-						ext: '.css'
-					}
-				]
-			}
-		},
+        // Add text domain
+        addtextdomain: {
+            textdomain: '<%= pkg.name %>',
+            target: {
+                files: {
+                    src: ['*.php', '**/*.php', '!node_modules/**', '!build/**']
+                }
+            }
+        },
 
-		// Generate RTL .css files.
-		rtlcss: {
-			dist: {
-				expand: true,
-				src: [
-					'<%= dirs.css %>/*.css',
-					'!<%= dirs.css %>/*-rtl.css'
-				],
-				ext: '-rtl.css'
-			}
-		},
+        // Generate .pot file
+        makepot: {
+            target: {
+                options: {
+                    domainPath: '/languages', // Where to save the POT file.
+                    exclude: ['build'], // List of files or directories to ignore.
+                    mainFile: '<%= pkg.name %>.php', // Main project file.
+                    potFilename: '<%= pkg.name %>.pot', // Name of the POT file.
+                    type: 'wp-plugin' // Type of project (wp-plugin or wp-theme).
+                }
+            }
+        },
 
-		// Minify all .css files.
-		cssmin: {
-		  dist: {
-		    files: [{
-		      expand: true,
-		      src: [
-					'<%= dirs.css %>/*.css'
-				],
-		      ext: '.css'
-		    }]
-		  }
-		},
+        // bump version numbers
+        replace: {
+            Version: {
+                src: [
+                    'readme.txt',
+                    'readme.md',
+                    '<%= pkg.name %>.php'
+                ],
+                overwrite: true,
+                replacements: [
+                    {
+                        from: /Stable tag:.*$/m,
+                        to: "Stable tag: <%= pkg.version %>"
+                    },
+                    {
+                        from: /Version:.*$/m,
+                        to: "Version:           <%= pkg.version %>"
+                    },
+                    {
+                        from: /public static \$version = \'.*.'/m,
+                        to: "public static $version = '<%= pkg.version %>'"
+                    },
+                    {
+                        from: /public \$version      = \'.*.'/m,
+                        to: "public $version      = '<%= pkg.version %>'"
+                    }
+                ]
+            }
+        }
 
-		// Autoprefixer.
-		postcss: {
-			options: {
-				processors: [
-					require( 'autoprefixer' )
-				]
-			},
-			dist: {
-				src: [
-					'<%= dirs.css %>/*.css'
-				]
-			}
-		},
+    });
 
-		// JavaScript linting with JSHint.
-		jshint: {
-			options: {
-				'esversion': 6,
-				'force': true,
-				'boss': true,
-				'curly': true,
-				'eqeqeq': false,
-				'eqnull': true,
-				'es3': false,
-				'expr': false,
-				'immed': true,
-				'noarg': true,
-				'onevar': true,
-				'quotmark': 'single',
-				'trailing': true,
-				'undef': true,
-				'unused': true,
-				'sub': false,
-				'browser': true,
-				'maxerr': 1000,
-				globals: {
-					'jQuery': false,
-					'$': false,
-					'Backbone': false,
-					'_': false,
-					'wc_bundle_params': false,
-					'wc_pb_number_round': false
-				},
-			},
-			all: [
-				'Gruntfile.js',
-				'<%= dirs.js %>/*.js',
-				'!<%= dirs.js %>/*.min.js'
-			]
-		},
+    // makepot and addtextdomain tasks
+    grunt.loadNpmTasks('grunt-wp-i18n');
 
-		// Minify .js files.
-		uglify: {
-			options: {
-				preserveComments: 'some'
-			},
-			jsfiles: {
-				files: [{
-					expand: true,
-					cwd: '<%= dirs.js %>',
-					src: [
-						'*.js',
-						'!*.min.js'
-					],
-					dest: '<%= dirs.js %>',
-					ext: '.min.js'
-				}]
-			}
-		},
+    grunt.registerTask('docs', ['wp_readme_to_markdown']);
 
-		// Watch changes for assets.
-		watch: {
-			css: {
-				files: [
-					'<%= dirs.scss %>/*.scss'
-				],
-				tasks: [ 'sass', 'postcss' ]
-			},
-			js: {
-				files: [
-					'<%= dirs.js %>/*js'
-				],
-				tasks: ['uglify']
-			}
-		},
+    grunt.registerTask('build', ['replace', 'makepot']);
 
-		// bump version numbers (replace with version in package.json)
-		replace: {
-			Version: {
-				src: [
-					'readme.txt',
-					'<%= pkg.name %>.php'
-				],
-				overwrite: true,
-				replacements: [
-					{
-						from: /Stable tag:.*$/m,
-						to: 'Stable tag: <%= pkg.version %>'
-					},
-					{
-						from: /Version:.*$/m,
-						to: 'Version: <%= pkg.version %>'
-					},
-					{
-						from: /public \$version = \'.*.'/m,
-						to: 'public $version = <%= pkg.version %>'
-					},
-					{
-						from: /public \$version      = \'.*.'/m,
-						to: 'public $version      = <%= pkg.version %>'
-					}
-				]
-			}
-		},
-
-	});
-
-	grunt.registerTask( 'js', [
-		'jshint',
-		'uglify'
-	]);
-
-	grunt.registerTask( 'css', [
-		'sass',
-		'rtlcss',
-		'postcss',
-		'cssmin'
-	]);
-
-	grunt.registerTask( 'assets', [
-		'js',
-		'css'
-	]);
-
-	grunt.registerTask( 'build', [
-		'replace',
-		'assets'
-	]);
 };
