@@ -31,13 +31,18 @@ When visiting the single product page, the add to cart button should now be gone
 
 However, the product can still be purchased as part of a container:
 
-
 <img src="https://user-images.githubusercontent.com/507025/79056355-de5b4380-7c12-11ea-9f0e-4fed033f8b6f.png" alt="The Woo Ninja product appears in cart as part of T-Shirt 6 Pack" />
 
 == Compatibility Requirements
 [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770) 1.9.1
 [Bundle](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770) 6.2.2
 [Composite](https://woocommerce.com/products/composite-products//?aff=5151&cid=8069770) 6.2.2
+
+== Screenshots ==
+
+1. Product data metabox showing not sold separately checkbox in Inventory tab
+2. single product page for Woo Ninja product with no add to cart button
+3. The Woo Ninja product appears in cart as part of T-Shirt 6 Pack
 
 == Changelog ==
 
