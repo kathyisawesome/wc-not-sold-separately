@@ -79,7 +79,7 @@ class WC_MNM_Not_Sold_Separately {
 			self::$post_sync_hooks[]              = 'woocommerce_mnm_synced';
 		}
 
-		if ( ! empty( self::$bundle_types ) ) {
+		if ( ! empty( self::$pre_sync_hooks ) || ! empty( self::$post_sync_hooks ) ) {
 			self::add_hooks();
 		}
 
