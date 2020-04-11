@@ -48,6 +48,12 @@ class WC_MNM_Not_Sold_Separately {
 	private static $post_sync_hooks = array();
 
 	/**
+	 * Post-sync hook names.
+	 * @var array
+	 */
+	private static $cart_loaded = true;
+
+	/**
 	 * Plugin URL.
 	 *
 	 * @return string
@@ -105,11 +111,13 @@ class WC_MNM_Not_Sold_Separately {
 		foreach( self::$pre_sync_hooks as $hook ) {
 			add_action( $hook, array( __CLASS__, 'remove_is_purchasable' ) );
 		}
+		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
 
 		// Restore is_purchasable filter after sync.
 		foreach( self::$post_sync_hooks as $hook ) {
 			add_action( $hook, array( __CLASS__, 'restore_is_purchasable' ) );
 		}
+		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'restore_is_purchasable' ) );
 
 	}
 
@@ -166,6 +174,11 @@ class WC_MNM_Not_Sold_Separately {
 	 * Removes is_purchasable filter in bundled product contexts.
 	 */
 	public static function remove_is_purchasable() {
+
+		// Set cart loading flag, because the synced hook is firing on the parent product before the bundled products finish loading.
+		if( 'woocommerce_load_cart_from_session' === current_action() ) {
+			self::$cart_loaded = false;
+		}
 		remove_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
 	}
 
@@ -173,7 +186,15 @@ class WC_MNM_Not_Sold_Separately {
 	 * Removes is_purchasable filter in bundled product contexts.
 	 */
 	public static function restore_is_purchasable() {
-		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+
+		// Reset cart loading flag.
+		if( 'woocommerce_cart_loaded_from_session' === current_action() ) {
+			self::$cart_loaded = true;
+		}
+
+		if( self::$cart_loaded ) {
+			add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		}
 	}
 
 	/*-----------------------------------------------------------------------------------*/
