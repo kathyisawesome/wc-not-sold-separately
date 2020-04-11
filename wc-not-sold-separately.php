@@ -99,7 +99,7 @@ class WC_MNM_Not_Sold_Separately {
 		/**
 		 * Manipulate single product availability.
 		 */
-		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 20, 2 );
+		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
 
 		// Remove is_purchasable filter before sync.
 		foreach( self::$pre_sync_hooks as $hook ) {
@@ -166,14 +166,14 @@ class WC_MNM_Not_Sold_Separately {
 	 * Removes is_purchasable filter in bundled product contexts.
 	 */
 	public static function remove_is_purchasable() {
-		remove_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 20, 2 );
+		remove_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
 	}
 
 	/**
 	 * Removes is_purchasable filter in bundled product contexts.
 	 */
 	public static function restore_is_purchasable() {
-		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 20, 2 );
+		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
 	}
 
 	/*-----------------------------------------------------------------------------------*/
