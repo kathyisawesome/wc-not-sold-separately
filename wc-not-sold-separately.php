@@ -63,13 +63,13 @@ class WC_MNM_Not_Sold_Separately {
 
 		// Bundles.
 		if ( class_exists( 'WC_Bundles' ) ) {
-			self::$pre_sync_hooks[]               = 'woocommerce_bundles_before_sync';  // does not exist yet.
-			self::$post_sync_hooks[]              = 'woocommerce_bundles_synced_bundle';.
+			self::$pre_sync_hooks[]               = 'woocommerce_bundles_before_sync_bundle';
+			self::$post_sync_hooks[]              = 'woocommerce_bundles_synced_bundle';
 		}
 
 		// Composites.
 		if ( class_exists( 'WC_Composite_Products' ) ) {
-			self::$pre_sync_hooks[]               = 'woocommerce_composite_before_sync'; // does not exist yet.
+			self::$pre_sync_hooks[]               = 'woocommerce_composite_before_sync_bundle';
 			self::$post_sync_hooks[]              = 'woocommerce_composite_synced_bundle';
 		}
 
