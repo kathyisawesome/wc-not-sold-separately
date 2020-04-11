@@ -103,12 +103,12 @@ class WC_MNM_Not_Sold_Separately {
 
 		// Remove is_purchasable filter before sync.
 		foreach( self::$pre_sync_hooks as $hook ) {
-			add_action( $hook, array( __CLASS__, 'remove_is_purchasable' ), 1 );
+			add_action( $hook, array( __CLASS__, 'remove_is_purchasable' ) );
 		}
 
 		// Restore is_purchasable filter after sync.
 		foreach( self::$post_sync_hooks as $hook ) {
-			add_action( $hook, array( __CLASS__, 'restore_is_purchasable' ), 1 );
+			add_action( $hook, array( __CLASS__, 'restore_is_purchasable' ) );
 		}
 
 	}
