@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WC_MNM_Not_Sold_Separately {
+class WC_Not_Sold_Separately {
 
 	/**
 	 * Plugin version.
@@ -265,4 +265,4 @@ class WC_MNM_Not_Sold_Separately {
 	}
 
 }
-add_action( 'woocommerce_loaded', array( 'WC_MNM_Not_Sold_Separately', 'init' ) );
+add_action( 'woocommerce_loaded', array( 'WC_Not_Sold_Separately', 'init' ) );
