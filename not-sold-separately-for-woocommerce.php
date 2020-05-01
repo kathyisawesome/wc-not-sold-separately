@@ -33,19 +33,20 @@ class WC_MNM_Not_Sold_Separately {
 	 *
 	 * @var string
 	 */
-	public static $version = '1.0.0-beta-1';
+	public static $version = '1.0.0-beta-2';
 
 	/**
-	 * Pre-sync hook names.
+	 * Complex product types.
 	 * @var array
 	 */
-	private static $pre_sync_hooks = array();
+	private static $bundle_types = array();
 
 	/**
-	 * Post-sync hook names.
+	 * Classes in the backtrace to exclude.
 	 * @var array
 	 */
-	private static $post_sync_hooks = array();
+	private static $backtrace_exclusions = array();
+
 
 	/**
 	 * Post-sync hook names.
@@ -69,23 +70,26 @@ class WC_MNM_Not_Sold_Separately {
 
 		// Bundles.
 		if ( class_exists( 'WC_Bundles' ) ) {
-			self::$pre_sync_hooks[]               = 'woocommerce_bundles_before_sync_bundle';
-			self::$post_sync_hooks[]              = 'woocommerce_bundles_synced_bundle';
+			self::$bundle_types[]       = 'bundle';
+			$add_to_exclusions          = array( 'WC_Product_Bundle', 'WC_PB_Cart' );
+			self::$backtrace_exclusions = array_merge( self::$backtrace_exclusions, $add_to_exclusions );
 		}
 
 		// Composites.
 		if ( class_exists( 'WC_Composite_Products' ) ) {
-			self::$pre_sync_hooks[]               = 'woocommerce_composite_before_sync_bundle';
-			self::$post_sync_hooks[]              = 'woocommerce_composite_synced_bundle';
+			self::$bundle_types[]       = 'composite';
+			$add_to_exclusions          = array( 'WC_Product_Composite', 'WC_CP_Cart' );
+			self::$backtrace_exclusions = array_merge( self::$backtrace_exclusions, $add_to_exclusions );
 		}
 
 		// Mix n Match.
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
-			self::$pre_sync_hooks[]               = 'wc_mnm_before_sync';
-			self::$post_sync_hooks[]              = 'woocommerce_mnm_synced';
+			self::$bundle_types[]       = 'mix-and-match';
+			$add_to_exclusions          = array( 'WC_Product_Mix_and_Match', 'WC_Mix_and_Match_Cart' );
+			self::$backtrace_exclusions = array_merge( self::$backtrace_exclusions, $add_to_exclusions );
 		}
 
-		if ( ! empty( self::$pre_sync_hooks ) || ! empty( self::$post_sync_hooks ) ) {
+		if ( ! empty( self::$bundle_types ) ) {
 			self::add_hooks();
 		}
 
@@ -106,18 +110,14 @@ class WC_MNM_Not_Sold_Separately {
 		 * Manipulate single product availability.
 		 */
 		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-
-		// Remove is_purchasable filter before sync.
-		foreach( self::$pre_sync_hooks as $hook ) {
-			add_action( $hook, array( __CLASS__, 'remove_is_purchasable' ) );
-		}
+		
+		// Remove is_purchasable filter in cart session.
 		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
 
-		// Restore is_purchasable filter after sync.
-		foreach( self::$post_sync_hooks as $hook ) {
-			add_action( $hook, array( __CLASS__, 'restore_is_purchasable' ) );
-		}
+		// Restore is_purchasable filter after cart loaded.
 		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'restore_is_purchasable' ) );
+
+
 
 	}
 
@@ -198,7 +198,7 @@ class WC_MNM_Not_Sold_Separately {
 	}
 
 	/*-----------------------------------------------------------------------------------*/
-	/* Cart validation. */
+	/* Cart validation.                                                                  */
 	/*-----------------------------------------------------------------------------------*/
 
 	/**
@@ -208,11 +208,61 @@ class WC_MNM_Not_Sold_Separately {
 	 * @return  bool
 	 */
 	public static function is_purchasable( $is_purchasable , $product ) {
-		if( $product->is_type( array( 'simple', 'variable' ) ) && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) ) {
+
+		if( $product->is_type( array( 'simple', 'variable' ) ) && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) && ! self::is_classes_in_backtrace( self::$backtrace_exclusions ) ) {
 			$is_purchasable = false;
 		}
 		return $is_purchasable;
 	}
 
+	/*-----------------------------------------------------------------------------------*/
+	/* Helpers                                                                           */
+	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * To call {@see is_function_in_backtrace()} with the array of parameters.
+	 *
+	 * @param classes[] $classess Array of classess.
+	 *
+	 * @return bool True if any of the pair is found in the backtrace.
+	 */
+	public static function is_classes_in_backtrace( array $classes ) {
+		foreach ( $classes as $class ) {
+			if ( self::is_class_in_backtrace( $class ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if was called by a specific class (could be any levels deep).
+	 *
+	 * @param callable|string $class_name Class name.
+	 *
+	 * @return bool True if Class is in backtrace.
+	 */
+	public static function is_class_in_backtrace( $class_name ) {
+		$class_in_backtrace = false;
+
+		// Only look for strings.
+		if ( ! is_string( $class_name ) ) {
+			return false;
+		}
+
+		// Traverse backtrace and stop if the callable is found there.
+		foreach ( debug_backtrace() as $trace ) { // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
+			if ( isset( $trace['class'] ) && $trace['class'] === $class_name ) {
+				$class_in_backtrace = true;
+				if ( $class_in_backtrace ) {
+					break;
+				}
+			}
+		}
+
+		return $class_in_backtrace;
+	}
+
 }
-add_action( 'woocommerce_mnm_loaded', array( 'WC_MNM_Not_Sold_Separately', 'init' ) );
+add_action( 'woocommerce_loaded', array( 'WC_MNM_Not_Sold_Separately', 'init' ) );
