@@ -10,11 +10,11 @@
 * Text Domain: not-sold-separately-for-woocommerce
 * Domain Path: /languages/
 *
-* Requires at least: 5.3.0
-* Tested up to: 5.3.0
+* Requires at least: 5.5.0
+* Tested up to: 5.5.0
 *
 * WC requires at least: 4.0.0
-* WC tested up to: 4.1.0
+* WC tested up to: 4.6.0
 *
 * Copyright: © 2020 Kathy Darling
 * License: GNU General Public License v3.0
