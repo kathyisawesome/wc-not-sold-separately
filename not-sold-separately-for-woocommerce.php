@@ -265,4 +265,4 @@ class WC_Not_Sold_Separately {
 	}
 
 }
-add_action( 'woocommerce_loaded', array( 'WC_Not_Sold_Separately', 'init' ) );
+add_action( 'plugins_loaded', array( 'WC_Not_Sold_Separately', 'init' ), 20 );
