@@ -106,18 +106,22 @@ class WC_Not_Sold_Separately {
 		add_action( 'woocommerce_product_options_inventory_product_data', array( __CLASS__, 'product_options' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'save_meta' ) );
 
+
+		// Variable Product.
+		add_action( 'woocommerce_variation_options', array( __CLASS__, 'product_variations_options' ), 10, 3 );
+		add_action( 'woocommerce_admin_process_variation_object', array( __CLASS__, 'save_product_variation' ), 30, 2 );
+
 		/**
-		 * Manipulate single product availability.
+		 * Manipulate product availability.
 		 */
 		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		add_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		
 		// Remove is_purchasable filter in cart session.
 		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
 
 		// Restore is_purchasable filter after cart loaded.
 		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'restore_is_purchasable' ) );
-
-
 
 	}
 
@@ -166,6 +170,42 @@ class WC_Not_Sold_Separately {
 
 	}
 
+	/**
+	 * Add NYP checkbox to each variation
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string  $loop
+	 * @param array   $variation_data
+	 * @param WP_Post $variation
+	 */
+	public static function product_variations_options( $loop, $variation_data, $variation ) {
+
+		$variation_object = wc_get_product( $variation->ID );
+
+		$not_sold_separately = $variation_object->get_meta( '_not_sold_separately', 'edit' );
+		?>
+
+		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, 'yes' ); ?> /> <?php esc_html_e( 'Not sold separately', 'wc_name_your_price' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'wc_name_your_price' ); ?>" href="#">[?]</a></label>
+
+		<?php
+
+	}
+
+	/**
+	 * Save extra meta info for variations
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param obj WC_Product_Variation $variation
+	 * @param int $i
+	 */
+	public static function save_product_variation( $variation, $i ) {
+		$not_sold_separately = wc_bool_to_string( isset( $_POST['not_sold_separately'][ $i ] ) );
+		$variation->update_meta_data( '_not_sold_separately', $not_sold_separately );
+
+	}
+
 	/*-----------------------------------------------------------------------------------*/
 	/* Front-end Display */
 	/*-----------------------------------------------------------------------------------*/
@@ -180,6 +220,7 @@ class WC_Not_Sold_Separately {
 			self::$cart_loaded = false;
 		}
 		remove_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		remove_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 	}
 
 	/**
@@ -194,6 +235,7 @@ class WC_Not_Sold_Separately {
 
 		if( self::$cart_loaded ) {
 			add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+			remove_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		}
 	}
 
@@ -203,16 +245,35 @@ class WC_Not_Sold_Separately {
 
 	/**
 	 * Prevent products from being added to cart if not sold separately.
+	 * 
 	 * @param bool $is_purchasable
 	 * @param WC_Product $product Product object.
 	 * @return  bool
 	 */
 	public static function is_purchasable( $is_purchasable , $product ) {
 
-		if( $product->is_type( array( 'simple', 'variable' ) ) && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) && ! self::is_classes_in_backtrace( self::$backtrace_exclusions ) ) {
+		if( 0 === $product->get_parent_id() && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) && ! self::is_classes_in_backtrace( self::$backtrace_exclusions ) ) {
 			$is_purchasable = false;
 		}
 		return $is_purchasable;
+	}
+
+	/**
+	 * Prevent variations from displaying if not sold separately.
+	 *
+	 * @since  1.1.0
+	 * 
+	 * @param bool $is_visible
+	 * @param int $variation_id
+	 * @param int $parent_id
+	 * @param WC_Product_Variation $variation Product object.
+	 * @return  bool
+	 */
+	public static function is_visible( $is_visible , $variation_id, $parent_id, $variation ) {
+		if( wc_string_to_bool( $variation->get_meta( '_not_sold_separately' ) ) && ! self::is_classes_in_backtrace( self::$backtrace_exclusions ) ) { 
+			$is_visible = false;
+		}
+		return $is_visible;
 	}
 
 	/*-----------------------------------------------------------------------------------*/
