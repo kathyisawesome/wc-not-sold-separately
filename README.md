@@ -5,6 +5,7 @@ Limit WooCommerce products to being sold only as part of a [Mix and Match](https
 ## Usage
 
 1. Download and install as plugin.
+
 2. Edit a simple product and navigate to the "Inventory" tab in the product data metabox.
 
 ![product data metabox showing "not sold separately" checkbox in Inventory tab](https://user-images.githubusercontent.com/507025/138338330-b298f31d-9de5-4780-98be-5985dfe37383.png)
@@ -12,7 +13,7 @@ Limit WooCommerce products to being sold only as part of a [Mix and Match](https
 3. For an individual variation, you can set the status in the variation options.
 ![variation panel showing "not sold separately" checkbox](https://user-images.githubusercontent.com/507025/138338616-40203402-07af-4fb7-a62c-4666a6ec9054.png)
 
-3. Save the product/variation.
+4. Save the product/variation.
 
 When visiting the single product page, the add to cart button should now be gone:
 
