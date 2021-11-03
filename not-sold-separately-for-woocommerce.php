@@ -114,9 +114,9 @@ class WC_Not_Sold_Separately {
 		/**
 		 * Manipulate product availability.
 		 */
-		add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		add_action( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		add_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
+		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		add_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		
 		// Remove is_purchasable filter in cart session.
 		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
@@ -220,9 +220,9 @@ class WC_Not_Sold_Separately {
 		if( 'woocommerce_load_cart_from_session' === current_action() ) {
 			self::$cart_loaded = false;
 		}
-		remove_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		remove_action( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		remove_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
+		remove_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		remove_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		remove_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 	}
 
 	/**
@@ -236,9 +236,9 @@ class WC_Not_Sold_Separately {
 		}
 
 		if( self::$cart_loaded ) {
-			add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-			add_action( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-			add_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
+			add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+			add_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+			add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		}
 	}
 
