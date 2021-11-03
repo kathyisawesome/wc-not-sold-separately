@@ -235,7 +235,7 @@ class WC_Not_Sold_Separately {
 
 		if( self::$cart_loaded ) {
 			add_action( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-			remove_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
+			add_action( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		}
 	}
 
