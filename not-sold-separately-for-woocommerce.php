@@ -37,23 +37,16 @@ class WC_Not_Sold_Separately {
 	public static $version = '1.1.0-beta-2';
 
 	/**
-	 * Complex product types.
+	 * Props added to child products.
 	 * @var array
 	 */
-	private static $bundle_types = array();
+	private static $bundled_props = array();
 
 	/**
-	 * Classes in the backtrace to exclude.
-	 * @var array
+	 * Skip test in cart.
+	 * @var bool
 	 */
-	private static $backtrace_exclusions = array();
-
-
-	/**
-	 * Post-sync hook names.
-	 * @var array
-	 */
-	private static $cart_loaded = true;
+	private static $cart_loading = false;
 
 	/**
 	 * Plugin URL.
@@ -71,26 +64,21 @@ class WC_Not_Sold_Separately {
 
 		// Bundles.
 		if ( class_exists( 'WC_Bundles' ) ) {
-			self::$bundle_types[]       = 'bundle';
-			$add_to_exclusions          = array( 'WC_Product_Bundle', 'WC_PB_Cart' );
-			self::$backtrace_exclusions = array_merge( self::$backtrace_exclusions, $add_to_exclusions );
+			self::$bundled_props[]   = 'bundled_item';
+			self::$bundled_props[]   = 'bundled_by';
 		}
 
 		// Composites.
 		if ( class_exists( 'WC_Composite_Products' ) ) {
-			self::$bundle_types[]       = 'composite';
-			$add_to_exclusions          = array( 'WC_Product_Composite', 'WC_CP_Cart' );
-			self::$backtrace_exclusions = array_merge( self::$backtrace_exclusions, $add_to_exclusions );
+
 		}
 
-		// Mix n Match.
+		// Mix and Match.
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
-			self::$bundle_types[]       = 'mix-and-match';
-			$add_to_exclusions          = array( 'WC_Product_Mix_and_Match', 'WC_Mix_and_Match_Cart' );
-			self::$backtrace_exclusions = array_merge( self::$backtrace_exclusions, $add_to_exclusions );
+			self::$bundled_props[]   = 'mnm_child_item';
 		}
 
-		if ( ! empty( self::$bundle_types ) ) {
+		if ( ! empty( self::$bundled_props ) ) {
 			self::add_hooks();
 		}
 
@@ -129,7 +117,6 @@ class WC_Not_Sold_Separately {
 
 	/**
 	 * Adds the sold separately option.
-	 *
 	 */
 	public static function product_options() {
 
@@ -167,7 +154,7 @@ class WC_Not_Sold_Separately {
 	}
 
 	/**
-	 * Add NYP checkbox to each variation
+	 * Add checkbox to each variation
 	 *
 	 * @since 1.1.0
 	 *
@@ -202,43 +189,9 @@ class WC_Not_Sold_Separately {
 
 	}
 
+
 	/*-----------------------------------------------------------------------------------*/
 	/* Front-end Display */
-	/*-----------------------------------------------------------------------------------*/
-
-	/**
-	 * Removes is_purchasable filter in bundled product contexts.
-	 */
-	public static function remove_is_purchasable() {
-
-		// Set cart loading flag, because the synced hook is firing on the parent product before the bundled products finish loading.
-		if( 'woocommerce_load_cart_from_session' === current_action() ) {
-			self::$cart_loaded = false;
-		}
-		remove_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		remove_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		remove_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
-	}
-
-	/**
-	 * Removes is_purchasable filter in bundled product contexts.
-	 */
-	public static function restore_is_purchasable() {
-
-		// Reset cart loading flag.
-		if( 'woocommerce_cart_loaded_from_session' === current_action() ) {
-			self::$cart_loaded = true;
-		}
-
-		if( self::$cart_loaded ) {
-			add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-			add_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-			add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
-		}
-	}
-
-	/*-----------------------------------------------------------------------------------*/
-	/* Cart validation.                                                                  */
 	/*-----------------------------------------------------------------------------------*/
 
 	/**
@@ -250,8 +203,11 @@ class WC_Not_Sold_Separately {
 	 */
 	public static function is_purchasable( $is_purchasable , $product ) {
 
-		if( 0 === $product->get_parent_id() && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) && ! self::is_classes_in_backtrace( self::$backtrace_exclusions ) ) {
-			$is_purchasable = false;
+		if ( ! self::$cart_loading ) {
+
+			if ( ! $product->get_parent_id() && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) && ! self::is_in_bundled_context( $product ) ) {
+				$is_purchasable = false;
+			}
 		}
 		return $is_purchasable;
 	}
@@ -268,59 +224,55 @@ class WC_Not_Sold_Separately {
 	 * @return  bool
 	 */
 	public static function is_visible( $is_visible , $variation_id, $parent_id, $variation ) {
-		if( wc_string_to_bool( $variation->get_meta( '_not_sold_separately' ) ) && ! self::is_classes_in_backtrace( self::$backtrace_exclusions ) ) { 
+		if ( wc_string_to_bool( $variation->get_meta( '_not_sold_separately' ) ) && ! self::is_in_bundled_context( $variation ) ) { 
 			$is_visible = false;
 		}
 		return $is_visible;
 	}
 
 	/*-----------------------------------------------------------------------------------*/
+	/* Cart validation.                                                                  */
+	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Set flag to bypass is_purchasable filter while loading the cart from session.
+	 */
+	public static function remove_is_purchasable() {
+		self::$cart_loading = true;
+	}
+
+	/**
+	 * Reset cart loading flag.
+	 */
+	public static function restore_is_purchasable() {
+		self::$cart_loading = false;
+	}
+
+
+	/*-----------------------------------------------------------------------------------*/
 	/* Helpers                                                                           */
 	/*-----------------------------------------------------------------------------------*/
 
 	/**
-	 * To call {@see is_function_in_backtrace()} with the array of parameters.
+	 * Test if the product is part of a bundle.
 	 *
-	 * @param classes[] $classess Array of classess.
+	 * @param WC_Product
 	 *
-	 * @return bool True if any of the pair is found in the backtrace.
+	 * @return bool True if has defining prop set on product.
 	 */
-	public static function is_classes_in_backtrace( array $classes ) {
-		foreach ( $classes as $class ) {
-			if ( self::is_class_in_backtrace( $class ) ) {
-				return true;
+	private static function is_in_bundled_context( $product ) {
+
+		$is_in_bundled_context = false;
+
+		foreach ( self::$bundled_props as $prop ) {
+			if ( property_exists( $product, $prop ) ) {
+				$is_in_bundled_context = true;
+				break;
 			}
 		}
+		
 
-		return false;
-	}
-
-	/**
-	 * Check if was called by a specific class (could be any levels deep).
-	 *
-	 * @param callable|string $class_name Class name.
-	 *
-	 * @return bool True if Class is in backtrace.
-	 */
-	public static function is_class_in_backtrace( $class_name ) {
-		$class_in_backtrace = false;
-
-		// Only look for strings.
-		if ( ! is_string( $class_name ) ) {
-			return false;
-		}
-
-		// Traverse backtrace and stop if the callable is found there.
-		foreach ( debug_backtrace() as $trace ) { // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-			if ( isset( $trace['class'] ) && $trace['class'] === $class_name ) {
-				$class_in_backtrace = true;
-				if ( $class_in_backtrace ) {
-					break;
-				}
-			}
-		}
-
-		return $class_in_backtrace;
+		return $is_in_bundled_context;
 	}
 
 }
