@@ -1,6 +1,6 @@
 # Not Sold Separately for WooCommerce
 
-Limit WooCommerce products to being sold only as part of a [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770), [Bundle](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770), or [Composite](https://woocommerce.com/products/composite-products//?aff=5151&cid=8069770) product.
+Limit WooCommerce products to being sold only as part of a [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/), [Bundle](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770), or [Composite](https://woocommerce.com/products/composite-products//?aff=5151&cid=8069770) product.
 
 ## Usage
 
@@ -26,7 +26,7 @@ However, the product can still be purchased as part of a container:
 ![The Woo Ninja product appears in cart as part of T-Shirt 6 Pack](https://user-images.githubusercontent.com/507025/77197688-405cd900-6aab-11ea-9312-239452036126.png)
 
 ## Compatibility Requirements
-[Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/?) 1.9.1
+[Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/?) 2.0.0
 [Bundle](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770) 6.2.2
 [Composite](https://woocommerce.com/products/composite-products//?aff=5151&cid=8069770) 6.2.2
 
