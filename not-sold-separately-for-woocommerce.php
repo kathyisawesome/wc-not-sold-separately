@@ -100,30 +100,24 @@ class WC_Not_Sold_Separately {
 	 * Hooks for plugin support.
 	 */
 	public static function add_hooks() {
-
-		/**
-		 * Admin.
-		 */
-		add_action( 'woocommerce_product_options_inventory_product_data', array( __CLASS__, 'product_options' ) );
-		add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'save_meta' ) );
-
+		// Admin
+		add_action( 'woocommerce_product_options_inventory_product_data', [ __CLASS__, 'product_options' ] );
+		add_action( 'woocommerce_admin_process_product_object', [ __CLASS__, 'save_meta' ] );
 
 		// Variable Product.
-		add_action( 'woocommerce_variation_options', array( __CLASS__, 'product_variations_options' ), 10, 3 );
-		add_action( 'woocommerce_admin_process_variation_object', array( __CLASS__, 'save_product_variation' ), 30, 2 );
+		add_action( 'woocommerce_variation_options', [ __CLASS__, 'product_variations_options' ], 10, 3 );
+		add_action( 'woocommerce_admin_process_variation_object', [ __CLASS__, 'save_product_variation' ], 30, 2 );
 
-		/**
-		 * Manipulate product availability.
-		 */
-		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		add_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
+		// Manipulate product availability.
+		add_filter( 'woocommerce_is_purchasable', [ __CLASS__, 'is_purchasable' ], 99, 2 );
+		add_filter( 'woocommerce_variation_is_purchasable', [ __CLASS__, 'is_purchasable' ], 99, 2 );
+		add_filter( 'woocommerce_variation_is_visible', [ __CLASS__, 'is_visible' ], 99, 4 );
 		
 		// Remove is_purchasable filter in cart session.
-		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
+		add_action( 'woocommerce_load_cart_from_session', [ __CLASS__, 'remove_is_purchasable' ] );
 
 		// Restore is_purchasable filter after cart loaded.
-		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'restore_is_purchasable' ) );
+		add_action( 'woocommerce_cart_loaded_from_session', [ __CLASS__, 'restore_is_purchasable' ] );
 
 	}
 
