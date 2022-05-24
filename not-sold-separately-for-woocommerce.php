@@ -66,6 +66,7 @@ class WC_Not_Sold_Separately {
 		if ( class_exists( 'WC_Bundles' ) ) {
 			self::$bundled_props[]   = 'bundled_item';
 			self::$bundled_props[]   = 'bundled_by';
+			self::$bundled_cart_fn[] = 'wc_pb_is_bundled_cart_item';
 		}
 
 		// Composites.
@@ -76,6 +77,7 @@ class WC_Not_Sold_Separately {
 		// Mix and Match.
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
 			self::$bundled_props[]   = 'mnm_child_item';
+			self::$bundled_cart_fn[] = 'wc_mnm_is_child_cart_item';
 		}
 
 		if ( ! empty( self::$bundled_props ) ) {
@@ -106,6 +108,9 @@ class WC_Not_Sold_Separately {
 
 		// Restore is_purchasable filter after cart loaded.
 		add_action( 'woocommerce_cart_loaded_from_session', [ __CLASS__, 'restore_is_purchasable' ] );
+
+		// Catch any stray standalone products.
+		add_filter( 'woocommerce_pre_remove_cart_item_from_session', [ __CLASS__, 'remove_cart_item_from_session' ], 10, 3 );
 
 	}
 
@@ -248,6 +253,48 @@ class WC_Not_Sold_Separately {
 		self::$cart_loading = false;
 	}
 
+	/**
+	 * Prevent products from being added to cart if not sold separately.
+	 * 
+	 * @param bool $remove If true, the item will not be added to the cart. Default: false.
+	 * @param string $key Cart item key.
+	 * @param array $values Cart item values e.g. quantity and product_id.
+	 * @return  bool
+	 */
+	public static function remove_cart_item_from_session( $remove, $key, $values ) {
+
+		$is_bundled = false;
+		
+		foreach( self::$bundled_cart_fn as $fn ) {
+			if ( $fn( $values ) ) {
+				$is_bundled = true;
+				break;
+			}
+
+		}
+
+		if ( ! $is_bundled ) {
+
+			$product = wc_get_product( $values['variation_id'] ? $values['variation_id'] : $values['product_id'] );
+
+			$remove = wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) );
+		
+			if ( $remove ) {
+				/* translators: %s: product name */
+				$message = sprintf( __( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'woocommerce' ), $product->get_name() );
+				/**
+				 * Filter message about item removed from the cart.
+				 *
+				 * @since 2.0.0
+				 * @param string     $message Message.
+				 * @param WC_Product $product Product data.
+				 */
+				$message = apply_filters( 'wc_not_sold_separately_cart_item_removed_message', $message, $product );
+				wc_add_notice( $message, 'error' );
+			}
+		}
+		return $remove;
+	}
 
 	/*-----------------------------------------------------------------------------------*/
 	/* Helpers                                                                           */
