@@ -28,6 +28,10 @@ However, the product can still be purchased as part of a container:
 ## Compatibility Requirements
 [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/?) 2.0.0
 
+### Automatic plugin updates
+
+Plugin updates can be enabled by installing the [Git Updater](https://git-updater.com/) plugin.
+
 ## Important
 
 1. This is proof of concept and does not receieve priority support.

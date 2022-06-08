@@ -10,6 +10,9 @@
 * Text Domain: not-sold-separately-for-woocommerce
 * Domain Path: /languages/
 *
+* GitHub Plugin URI: kathyisawesome/wc-not-sold-separately
+* Release Asset: true
+*
 * Requires PHP: 7.0
 * Requires at least: 5.6.0
 * Tested up to: 6.0.0
