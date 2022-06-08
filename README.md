@@ -1,6 +1,6 @@
 # Not Sold Separately for WooCommerce
 
-Limit WooCommerce products to being sold only as part of a [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/), [Bundle](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770), or [Composite](https://woocommerce.com/products/composite-products//?aff=5151&cid=8069770) product.
+Limit WooCommerce products to being sold only as part of a [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/) product.
 
 ## Usage
 
@@ -27,8 +27,6 @@ However, the product can still be purchased as part of a container:
 
 ## Compatibility Requirements
 [Mix and Match](https://woocommerce.com/products/woocommerce-mix-and-match-products/?) 2.0.0
-[Bundle](https://woocommerce.com/products/woocommerce-mix-and-match-products/?aff=5151&cid=8069770) 6.2.2
-[Composite](https://woocommerce.com/products/composite-products//?aff=5151&cid=8069770) 6.2.2
 
 ## Important
 
