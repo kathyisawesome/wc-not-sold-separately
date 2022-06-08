@@ -115,8 +115,11 @@ class WC_Not_Sold_Separately {
 		// Restore is_purchasable filter after cart loaded.
 		add_action( 'woocommerce_cart_loaded_from_session', [ __CLASS__, 'restore_is_purchasable' ] );
 
+		// Change add to cart validation error.
+		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'product_cannot_be_purchased_message' ], 10, 2 );	
+
 		// Catch any stray standalone products.
-		add_filter( 'woocommerce_pre_remove_cart_item_from_session', [ __CLASS__, 'remove_cart_item_from_session' ], 10, 3 );
+		add_filter( 'woocommerce_pre_remove_cart_item_from_session', [ __CLASS__, 'remove_cart_item_from_session' ], 10, 3 );		
 
 	}
 
@@ -256,6 +259,23 @@ class WC_Not_Sold_Separately {
 	public static function restore_is_purchasable() {
 		self::$cart_loading = false;
 	}
+
+
+	/**
+	 * Filters message about product unable to be purchased.
+	 *
+	 * @since 2.0.0
+	 * @param string     $message Message.
+	 * @param WC_Product $product Product data.
+	 */
+	public static function product_cannot_be_purchased_message( $message, $product ) {
+		if ( self::is_not_sold_separately( $product ) ) {
+			// Translators: %s is the name of the product being added to the cart.
+			$message = sprintf( __( 'Sorry, %s is not sold separately.', 'not-sold-separately-for-woocommerce' ), $product->get_name() );
+		}
+		return $message;
+	}
+
 
 	/**
 	 * Prevent products from being added to cart if not sold separately.
