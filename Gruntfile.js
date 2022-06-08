@@ -121,7 +121,6 @@
 					src: [
 					'readme.txt',
 					'<%= pkg.name %>.php',
-					'includes/class-wc-mix-and-match.php'
 					],
 					overwrite: true,
 					replacements: [
@@ -138,8 +137,12 @@
 						to: "public $version = '<%= pkg.version %>'"
 					},
 					{
-						from: /public \$version      = \'.*.'/m,
-						to: "public $version      = '<%= pkg.version %>'"
+						from: /public \$version = \'.*.'/m,
+						to: "public $version = '<%= pkg.version %>'"
+					},
+					{
+						from: /const VERSION = \'.*.'/m,
+						to: "const VERSION = '<%= pkg.version %>'"
 					}
 					]
 				},

@@ -34,7 +34,7 @@ class WC_Not_Sold_Separately {
 	 *
 	 * @var string
 	 */
-	public static $version = '1.1.0-beta-2';
+	const VERSION = '2.0.0-rc-1';
 
 	/**
 	 * Props added to child products.
