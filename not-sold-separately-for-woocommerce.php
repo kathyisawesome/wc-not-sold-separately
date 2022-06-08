@@ -40,7 +40,13 @@ class WC_Not_Sold_Separately {
 	 * Props added to child products.
 	 * @var array
 	 */
-	private static $bundled_props = array();
+	private static $bundled_props = [];
+
+	/**
+	 * Functions that test child cart items.
+	 * @var array
+	 */
+	private static $bundled_cart_fn = [];
 
 	/**
 	 * Skip test in cart.
