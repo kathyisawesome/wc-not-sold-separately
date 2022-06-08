@@ -1,7 +1,4 @@
 # Editors
-project.xml
-project.properties
-/nbproject/private/
 .buildpath
 .project
 .settings*
@@ -9,12 +6,9 @@ sftp-config.json
 .idea
 
 # Grunt
-/node_modules/
-/deploy/
+node_modules/
+deploy/
 npm-debug.log
-
-# Sass
-.sass-cache/
 
 # OS X metadata
 .DS_Store
@@ -22,12 +16,8 @@ npm-debug.log
 # Windows junk
 Thumbs.db
 
-# ApiGen
-/wc-apidocs/
-
-# Unit tests
-/tmp
-
 # Logs
-/logs
 package-lock.json
+
+# Languages
+languages/
