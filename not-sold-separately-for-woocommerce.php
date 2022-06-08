@@ -139,7 +139,7 @@ class WC_Not_Sold_Separately {
 		// Not sold separately meta.
 		woocommerce_wp_checkbox( array(
 			'id'          => '_not_sold_separately',
-			'label'       => __( 'Not sold separately', 'woocommerce-mix-and-match-products' ),
+			'label'       => __( 'Not sold separately', 'not-sold-separately-for-woocommerce' ),
 			'wrapper_class' => 'show_if_simple show_if_variable',
 			'value'       => self::is_not_sold_separately( $product_object, 'edit' ) ? 'yes' : 'no',
 			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce' ),
@@ -305,7 +305,7 @@ class WC_Not_Sold_Separately {
 		
 			if ( $remove ) {
 				/* translators: %s: product name */
-				$message = sprintf( __( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'woocommerce' ), $product->get_name() );
+				$message = sprintf( __( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'not-sold-separately-for-woocommerce' ), $product->get_name() );
 				/**
 				 * Filter message about item removed from the cart.
 				 *
