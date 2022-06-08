@@ -178,7 +178,7 @@ class WC_Not_Sold_Separately {
 		$not_sold_separately = self::is_not_sold_separately( $variation->ID, 'edit' );
 		?>
 
-		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, 'yes' ); ?> /> <?php esc_html_e( 'Not sold separately', 'wc_name_your_price' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'wc_name_your_price' ); ?>" href="#">[?]</a></label>
+		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, 'yes' ); ?> /> <?php esc_html_e( 'Not sold separately', 'not-sold-separately-for-woocommerce' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce' ); ?>" href="#">[?]</a></label>
 
 		<?php
 
