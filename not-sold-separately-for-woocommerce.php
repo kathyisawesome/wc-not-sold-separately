@@ -138,7 +138,7 @@ class WC_Not_Sold_Separately {
 			'id'          => '_not_sold_separately',
 			'label'       => __( 'Not sold separately', 'woocommerce-mix-and-match-products' ),
 			'wrapper_class' => 'show_if_simple show_if_variable',
-			'value'       => wc_string_to_bool( $product_object->get_meta( '_not_sold_separately' ) ) ? 'yes' : 'no',
+			'value'       => self::is_not_sold_separately( $product_object, 'edit' ) ? 'yes' : 'no',
 			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce' ),
 		) );
 
@@ -175,9 +175,7 @@ class WC_Not_Sold_Separately {
 	 */
 	public static function product_variations_options( $loop, $variation_data, $variation ) {
 
-		$variation_object = wc_get_product( $variation->ID );
-
-		$not_sold_separately = $variation_object->get_meta( '_not_sold_separately', 'edit' );
+		$not_sold_separately = self::is_not_sold_separately( $variation->ID, 'edit' );
 		?>
 
 		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, 'yes' ); ?> /> <?php esc_html_e( 'Not sold separately', 'wc_name_your_price' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'wc_name_your_price' ); ?>" href="#">[?]</a></label>
@@ -216,7 +214,7 @@ class WC_Not_Sold_Separately {
 
 		if ( ! self::$cart_loading ) {
 
-			if ( ! $product->get_parent_id() && wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) ) && ! self::is_in_bundled_context( $product ) ) {
+			if ( ! $product->get_parent_id() && self::is_not_sold_separately( $product ) && ! self::is_in_bundled_context( $product ) ) {
 				$is_purchasable = false;
 			}
 		}
@@ -235,7 +233,7 @@ class WC_Not_Sold_Separately {
 	 * @return  bool
 	 */
 	public static function is_visible( $is_visible , $variation_id, $parent_id, $variation ) {
-		if ( wc_string_to_bool( $variation->get_meta( '_not_sold_separately' ) ) && ! self::is_in_bundled_context( $variation ) ) { 
+		if ( self::is_not_sold_separately( $variation ) && ! self::is_in_bundled_context( $variation ) ) { 
 			$is_visible = false;
 		}
 		return $is_visible;
@@ -283,7 +281,7 @@ class WC_Not_Sold_Separately {
 
 			$product = wc_get_product( $values['variation_id'] ? $values['variation_id'] : $values['product_id'] );
 
-			$remove = wc_string_to_bool( $product->get_meta( '_not_sold_separately' ) );
+			$remove = self::is_not_sold_separately( $product );
 		
 			if ( $remove ) {
 				/* translators: %s: product name */
@@ -305,6 +303,23 @@ class WC_Not_Sold_Separately {
 	/*-----------------------------------------------------------------------------------*/
 	/* Helpers                                                                           */
 	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Test if the product is part of a bundle.
+	 *
+	 * @param mixed int|WC_Product
+	 *
+	 * @return bool
+	 */
+	private static function is_not_sold_separately( $product, $context = 'view' ) {
+
+		if ( is_integer( $product ) ) { 
+			$product = wc_get_product( $product );
+		}
+
+		return $product instanceof WC_Product && wc_string_to_bool( $product->get_meta( '_not_sold_separately', true, $context ) );
+
+	}
 
 	/**
 	 * Test if the product is part of a bundle.
