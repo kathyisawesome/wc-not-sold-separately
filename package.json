@@ -10,15 +10,15 @@
 	"homepage": "http://woocommerce.com/products/woocommerce-mix-and-match/",
 	"main": "Gruntfile.js",
 	"devDependencies": {
-		"grunt": "^1.1.0",
+		"grunt": "^1.5.3",
 		"grunt-text-replace": "^0.4.0",
 		"grunt-wp-i18n": "^1.0.3",
-		"grunt-wp-readme-to-markdown": "^2.0.1",
-		"load-grunt-tasks": "^5.1.0",
+		"grunt-wp-readme-to-markdown": "^2.1.0",
+		"load-grunt-tasks": "^5.1.0"
 	},
 	"scripts": {
-	  "build": "grunt build",
-	  "dev": "grunt dev",
-	  "release": "grunt release"
+		"build": "grunt build",
+		"dev": "grunt dev",
+		"release": "grunt release"
 	}
 }
