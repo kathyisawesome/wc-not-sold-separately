@@ -4,7 +4,6 @@
 
  module.exports = function(grunt) {
 
-	const sass = require( 'node-sass' );
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration.
@@ -14,163 +13,9 @@
 
 			// Setting folder templates.
 			dirs: {
-				css: 'assets/css',
 				fonts: 'assets/fonts',
 				js: 'assets/js',
-				php: 'includes',
-				scss: 'assets/scss'
-			},
-
-			// Compile all .scss files.
-			sass: {
-				compile: {
-					options: {
-						implementation: sass
-					},
-					files: [
-					{
-						expand: true,
-						cwd: '<%= dirs.scss %>/admin/',
-						src: ['**/*.scss'],
-						dest: '<%= dirs.css %>/admin/',
-						ext: '.css'
-					},
-					{
-						expand: true,
-						cwd: '<%= dirs.scss %>/frontend',
-						src: ['**/*.scss'],
-						dest: '<%= dirs.css %>/frontend',
-						ext: '.css'
-					}
-					]
-				}
-			},
-
-			// Generate RTL .css files.
-			rtlcss: {
-				dist: {
-					expand: true,
-					src: [
-					'<%= dirs.css %>/admin/*.css',
-					'!<%= dirs.css %>/admin/*-rtl.css',
-					'!<%= dirs.css %>/admin/*.min.css',
-					'<%= dirs.css %>/frontend/*.css',
-					'!<%= dirs.css %>/frontend/*-rtl.css',
-					'!<%= dirs.css %>/frontend/*.min.css'
-					],
-					ext: '-rtl.css'
-				}
-			},
-
-			// Minify all .css files.
-			cssmin: {
-				dist: {
-					files: [{
-						expand: true,
-						src: [
-						'<%= dirs.css %>/admin/*.css',
-						'!<%= dirs.css %>/admin/*.min.css',
-						'<%= dirs.css %>/frontend/*.css',
-						'!<%= dirs.css %>/frontend/*.min.css'
-						],
-						ext: '.min.css'
-					}]
-				}
-			},
-
-			// Autoprefixer.
-			postcss: {
-				options: {
-					processors: [
-					require( 'autoprefixer' )
-					]
-				},
-				dist: {
-					src: [
-					'<%= dirs.css %>/admin/*.css',
-					'<%= dirs.css %>/frontend/*.css'
-					]
-				}
-			},
-
-			// Minify .js files.
-			uglify: {
-				options: {
-					banner: '/*! <%= pkg.title %> <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM") %> */\n',
-					ie8: true,
-					parse: {
-						strict: false
-					},
-					output: {
-						comments : /@license|@preserve|^!/
-					}
-				},
-				admin: {
-					files: [{
-						expand: true,
-						cwd: '<%= dirs.js %>/admin/',
-						src: [
-						'*.js',
-						'!*.min.js'
-						],
-						dest: '<%= dirs.js %>/admin/',
-						ext: '.min.js'
-					}]
-				},
-				frontend: {
-					files: [{
-						expand: true,
-						cwd: '<%= dirs.js %>/frontend/',
-						src: [
-						'*.js',
-						'!*.min.js'
-						],
-						dest: '<%= dirs.js %>/frontend/',
-						ext: '.min.js'
-					}]
-				}
-			},
-
-			// JavaScript linting with JSHint.
-			jshint: {
-				options: {
-					reporter: require( 'jshint-stylish' ),
-					globals: {
-						"EO_SCRIPT_DEBUG": false,
-					},
-					'-W099': true, // Mixed spaces and tabs.
-					'-W083': true, // @Todo Fix functions within loop.
-					'-W082': true, // @Todo Function declarations should not be placed in blocks.
-					'-W020': true, // Read only - error when assigning EO_SCRIPT_DEBUG a value.
-					jshintrc: '.jshintrc'
-				},
-				all: [
-				'<%= dirs.js %>/admin/*.js',
-				'!<%= dirs.js %>/admin/*.min.js',
-				'<%= dirs.js %>/frontend/*.js',
-				'!<%= dirs.js %>/frontend/*.min.js'
-				]
-			},
-
-			// Watch changes for assets.
-			watch: {
-				css: {
-					files: [
-					'<%= dirs.scss %>/admin/**/*.scss',
-					'<%= dirs.scss %>/frontend/**/*.scss',
-					'<%= dirs.scss %>/**/*.scss'
-					],
-					tasks: ['sass']
-				},
-				js: {
-					files: [
-					'<%= dirs.js %>/admin/**/*js',
-					'<%= dirs.js %>/frontend/**/*js',
-					'!<%= dirs.js %>/admin/**/*.min.js',
-					'!<%= dirs.js %>/frontend/**/*.min.js'
-					],
-					tasks: ['jshint', 'uglify']
-				}
+				php: 'includes'
 			},
 
 			// # Build and release
@@ -327,35 +172,7 @@
 	grunt.registerTask(
 		'default',
 		[
-		'js',
-		'css',
-		]
-	);
-
-	grunt.registerTask(
-		'js',
-		[
-		'jshint',
-		'uglify:admin',
-		'uglify:frontend'
-		]
-	);
-
-	grunt.registerTask(
-		'css',
-		[
-		'sass',
-		'rtlcss',
-		'postcss',
-		'cssmin'
-		]
-	);
-
-	grunt.registerTask(
-		'assets',
-		[
-		'js',
-		'css'
+		'replace',
 		]
 	);
 
@@ -368,9 +185,9 @@
 		]
 	);
 
-	grunt.registerTask( 'dev', [ 'replace:prerelease', 'assets' ] );
+	grunt.registerTask( 'dev', [ 'replace:prerelease' ] );
 	grunt.registerTask( 'build', [ 'dev', 'addtextdomain', 'makepot' ] );
 	grunt.registerTask( 'prerelease', [ 'build', 'zip', 'clean' ] );
-	grunt.registerTask( 'release', [ 'replace:version', 'assets', 'addtextdomain', 'makepot', 'build', 'zip', 'clean' ] );
+	grunt.registerTask( 'release', [ 'replace:version', 'addtextdomain', 'makepot', 'build', 'zip', 'clean' ] );
 
 };
