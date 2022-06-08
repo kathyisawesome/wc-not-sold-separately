@@ -309,11 +309,15 @@ class WC_Not_Sold_Separately {
 	/**
 	 * Test if the product is part of a bundle.
 	 *
-	 * @param WC_Product
+	 * @param mixed int|WC_Product
 	 *
 	 * @return bool True if has defining prop set on product.
 	 */
 	private static function is_in_bundled_context( $product ) {
+
+		if ( is_integer( $product ) ) { 
+			$product = wc_get_product( $product );
+		}
 
 		$is_in_bundled_context = false;
 
