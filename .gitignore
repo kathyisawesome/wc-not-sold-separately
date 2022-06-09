@@ -21,3 +21,7 @@ package-lock.json
 
 # Languages
 languages/
+
+# Composer
+composer.lock
+vendor/

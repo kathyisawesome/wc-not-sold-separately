@@ -1,0 +1,28 @@
+{
+    "name": "kathyisawesome/wc-not-sold-separately",
+    "description": "Optionally restrict products to sale only as part of Mix and Match Product.",
+    "homepage": "https://github.com/kathyisawesome/wc-not-sold-separately",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "require-dev": {
+      "woocommerce/woocommerce-sniffs": "0.1.1"
+    },
+    "scripts": {
+      "phpcs": [
+          "phpcs . -s -p -n"
+      ],
+      "phpcs-pre-commit": [
+        "phpcs . -s -p -n"
+      ],
+      "phpcb": [
+          "phpcbf . "
+      ]
+    },
+    "extra": {
+      "scripts-description": {
+            "phpcs": "Analyze code against the WordPress coding standards with PHP_CodeSniffer",
+            "phpcb": "Fix coding standards warnings/errors automatically with PHP Code Beautifier"
+      }
+    }
+  }
+  
