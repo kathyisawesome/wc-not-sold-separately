@@ -1,5 +1,5 @@
 # Add build zip to GitHub releases.
-# Version: 1.0.0
+# Version: 1.1.0
 
 name: Release
 
@@ -91,6 +91,7 @@ jobs:
       - name: "Get release version."
         run: |
           echo "release_tag=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
+          echo "release_name=$(node -p -e "require('./package.json').name")" >> $GITHUB_ENV
 
       - name: "Logs debug information."
         run: |
