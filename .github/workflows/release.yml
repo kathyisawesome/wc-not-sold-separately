@@ -105,6 +105,6 @@ jobs:
       - name: "Add package to GitHub releases."
         uses: softprops/action-gh-release@v1
         with:
-          files: ./deploy/${{ env.release_tag }}/woocommerce-mix-and-match-products.zip
+          files: ./deploy/${{ env.release_tag }}/${{ env.release_name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
