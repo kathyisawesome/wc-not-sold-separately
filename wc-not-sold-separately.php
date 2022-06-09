@@ -142,10 +142,10 @@ class WC_Not_Sold_Separately {
 		// Not sold separately meta.
 		woocommerce_wp_checkbox( array(
 			'id'          => '_not_sold_separately',
-			'label'       => __( 'Not sold separately', 'not-sold-separately-for-woocommerce' ),
+			'label'       => __( 'Not sold separately', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ),
 			'wrapper_class' => 'show_if_simple show_if_variable',
 			'value'       => self::is_not_sold_separately( $product_object, 'edit' ) ? 'yes' : 'no',
-			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce' ),
+			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ),
 		) );
 
 	}
@@ -184,7 +184,7 @@ class WC_Not_Sold_Separately {
 		$not_sold_separately = self::is_not_sold_separately( $variation->ID, 'edit' );
 		?>
 
-		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, 'yes' ); ?> /> <?php esc_html_e( 'Not sold separately', 'not-sold-separately-for-woocommerce' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce' ); ?>" href="#">[?]</a></label>
+		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, 'yes' ); ?> /> <?php esc_html_e( 'Not sold separately', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ); ?>" href="#">[?]</a></label>
 
 		<?php
 
@@ -274,7 +274,7 @@ class WC_Not_Sold_Separately {
 	public static function product_cannot_be_purchased_message( $message, $product ) {
 		if ( self::is_not_sold_separately( $product ) ) {
 			// Translators: %s is the name of the product being added to the cart.
-			$message = sprintf( __( 'Sorry, %s is not sold separately.', 'not-sold-separately-for-woocommerce' ), $product->get_name() );
+			$message = sprintf( __( 'Sorry, %s is not sold separately.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ), $product->get_name() );
 		}
 		return $message;
 	}
@@ -308,7 +308,7 @@ class WC_Not_Sold_Separately {
 		
 			if ( $remove ) {
 				/* translators: %s: product name */
-				$message = sprintf( __( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'not-sold-separately-for-woocommerce' ), $product->get_name() );
+				$message = sprintf( __( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ), $product->get_name() );
 				/**
 				 * Filter message about item removed from the cart.
 				 *
