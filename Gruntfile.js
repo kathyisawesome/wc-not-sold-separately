@@ -105,8 +105,8 @@
 					options: {
 						domainPath: '/languages', // Where to save the POT file.
 						exclude: ['deploy','build','node_modules'], // List of files or directories to ignore.
-						mainFile: 'woocommerce-mix-and-match-products.php', // Main project file.
-						potFilename: 'woocommerce-mix-and-match-products.pot', // Name of the POT file.
+						mainFile: '<%= pkg.name %>.php', // Main project file.
+						potFilename: '<%= pkg.name %>.pot', // Name of the POT file.
 						type: 'wp-plugin', // Type of project (wp-plugin or wp-theme).
 						potHeaders: {
 							'Report-Msgid-Bugs-To': 'https://woocommerce.com/my-account/tickets/'
