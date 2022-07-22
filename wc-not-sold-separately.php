@@ -366,8 +366,7 @@ class WC_Not_Sold_Separately {
 			}
 		}
 		
-
-		return $is_in_bundled_context;
+		return (bool) apply_filters( 'wc_not_sold_separately_is_in_bundled_context', $is_in_bundled_context, $product );
 	}
 
 }
