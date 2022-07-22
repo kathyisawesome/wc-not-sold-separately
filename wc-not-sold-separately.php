@@ -3,7 +3,7 @@
 * Plugin Name: Not Sold Separately for WooCommerce
 * Plugin URI: https://woocommerce.com/products/woocommerce-mix-and-match-products/
 * Description: Optionally restrict products to sale only as part of Mix and Match Product.
-* Version: 2.0.1
+* Version: 2.1.0
 * Author: Kathy Darling
 * Author URI: http://kathyisawesome.com/
 *
@@ -37,7 +37,7 @@ class WC_Not_Sold_Separately {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.0.1';
+	const VERSION = '2.1.0';
 
 	/**
 	 * Props added to child products.
@@ -361,7 +361,7 @@ class WC_Not_Sold_Separately {
 		/**
 		 * Filter whether product is in bundled context.
 		 *
-		 * @since 2.0.1
+		 * @since 2.1.0
 		 * @param bool       $is_in_bundled_context Bundled by container or standalone.
 		 * @param WC_Product $product Product data.
 		 */
@@ -371,7 +371,7 @@ class WC_Not_Sold_Separately {
 	/**
 	 * Test if the cart item is part of a bundle.
 	 * 
-	 * @since 2.0.2
+	 * @since 2.1.0
 	 *
 	 * @param array $cart_item Cart item values
 	 * @return bool True if cart item is bundled by a container.
