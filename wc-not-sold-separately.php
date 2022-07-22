@@ -290,15 +290,7 @@ class WC_Not_Sold_Separately {
 	 */
 	public static function remove_cart_item_from_session( $remove, $key, $values ) {
 
-		$is_bundled = false;
-		
-		foreach( self::$bundled_cart_fn as $fn ) {
-			if ( $fn( $values ) ) {
-				$is_bundled = true;
-				break;
-			}
-
-		}
+		$is_bundled = self::is_in_bundled_cart_context( $values );
 
 		if ( ! $is_bundled ) {
 
@@ -366,7 +358,44 @@ class WC_Not_Sold_Separately {
 			}
 		}
 		
+		/**
+		 * Filter whether product is in bundled context.
+		 *
+		 * @since 2.0.1
+		 * @param bool       $is_in_bundled_context Bundled by container or standalone.
+		 * @param WC_Product $product Product data.
+		 */
 		return (bool) apply_filters( 'wc_not_sold_separately_is_in_bundled_context', $is_in_bundled_context, $product );
+	}
+
+	/**
+	 * Test if the cart item is part of a bundle.
+	 * 
+	 * @since 2.0.2
+	 *
+	 * @param array $cart_item Cart item values
+	 * @return bool True if cart item is bundled by a container.
+	 */
+	private static function is_in_bundled_cart_context( $cart_item ) {
+
+		$is_in_bundled_cart_context = false;
+		
+		foreach( self::$bundled_cart_fn as $fn ) {
+			if ( $fn( $cart_item ) ) {
+				$is_in_bundled_cart_context = true;
+				break;
+			}
+
+		}
+
+		/**
+		 * Filter whether cart item is in bundled context.
+		 *
+		 * @since 2.0.2
+		 * @param bool  $is_in_bundled_cart_context Bundled by container or standalone.
+		 * @param array $cart_item Cart item values. NB: Does not yet include WC_Product on 'data'
+		 */
+		return (bool) apply_filters( 'wc_not_sold_separately_is_in_bundled_cart_context', $is_in_bundled_cart_context, $cart_item );
 	}
 
 }
