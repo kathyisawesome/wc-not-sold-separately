@@ -75,7 +75,7 @@
 				main: {
 					options: {
 						mode: 'zip',
-						archive: 'deploy/<%= pkg.version %>/<%= pkg.name %>-<%= pkg.version %>.zip'
+						archive: 'deploy/<%= pkg.version %>/<%= pkg.name %>.zip'
 					},
 					expand: true,
 					cwd: 'build/',
