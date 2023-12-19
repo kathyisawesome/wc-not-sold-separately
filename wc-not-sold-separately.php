@@ -41,18 +41,21 @@ class WC_Not_Sold_Separately {
 
 	/**
 	 * Props added to child products.
+	 *
 	 * @var array
 	 */
-	private static $bundled_props = [];
+	private static $bundled_props = array();
 
 	/**
 	 * Functions that test child cart items.
+	 *
 	 * @var array
 	 */
-	private static $bundled_cart_fn = [];
+	private static $bundled_cart_fn = array();
 
 	/**
 	 * Skip test in cart.
+	 *
 	 * @var bool
 	 */
 	private static $cart_loading = false;
@@ -92,7 +95,6 @@ class WC_Not_Sold_Separately {
 		if ( ! empty( self::$bundled_props ) ) {
 			self::add_hooks();
 		}
-
 	}
 
 	/**
@@ -100,30 +102,29 @@ class WC_Not_Sold_Separately {
 	 */
 	public static function add_hooks() {
 		// Admin
-		add_action( 'woocommerce_product_options_inventory_product_data', [ __CLASS__, 'product_options' ] );
-		add_action( 'woocommerce_admin_process_product_object', [ __CLASS__, 'save_meta' ] );
+		add_action( 'woocommerce_product_options_inventory_product_data', array( __CLASS__, 'product_options' ) );
+		add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'save_meta' ) );
 
 		// Variable Product.
-		add_action( 'woocommerce_variation_options', [ __CLASS__, 'product_variations_options' ], 10, 3 );
-		add_action( 'woocommerce_admin_process_variation_object', [ __CLASS__, 'save_product_variation' ], 30, 2 );
+		add_action( 'woocommerce_variation_options', array( __CLASS__, 'product_variations_options' ), 10, 3 );
+		add_action( 'woocommerce_admin_process_variation_object', array( __CLASS__, 'save_product_variation' ), 30, 2 );
 
 		// Manipulate product availability.
-		add_filter( 'woocommerce_is_purchasable', [ __CLASS__, 'is_purchasable' ], 99, 2 );
-		add_filter( 'woocommerce_variation_is_purchasable', [ __CLASS__, 'is_purchasable' ], 99, 2 );
-		add_filter( 'woocommerce_variation_is_visible', [ __CLASS__, 'is_visible' ], 99, 4 );
+		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		add_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
+		add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		
 		// Remove is_purchasable filter in cart session.
-		add_action( 'woocommerce_load_cart_from_session', [ __CLASS__, 'remove_is_purchasable' ] );
+		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
 
 		// Restore is_purchasable filter after cart loaded.
-		add_action( 'woocommerce_cart_loaded_from_session', [ __CLASS__, 'restore_is_purchasable' ] );
+		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'restore_is_purchasable' ) );
 
 		// Change add to cart validation error.
-		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'product_cannot_be_purchased_message' ], 10, 2 );	
+		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', array( __CLASS__, 'product_cannot_be_purchased_message' ), 10, 2 );  
 
 		// Catch any stray standalone products.
-		add_filter( 'woocommerce_pre_remove_cart_item_from_session', [ __CLASS__, 'remove_cart_item_from_session' ], 10, 3 );		
-
+		add_filter( 'woocommerce_pre_remove_cart_item_from_session', array( __CLASS__, 'remove_cart_item_from_session' ), 10, 3 );       
 	}
 
 
@@ -147,7 +148,6 @@ class WC_Not_Sold_Separately {
 			'value'       => self::is_not_sold_separately( $product_object, 'edit' ) ? 'yes' : 'no',
 			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ),
 		) );
-
 	}
 
 
@@ -167,7 +167,6 @@ class WC_Not_Sold_Separately {
 			}
 
 		}
-
 	}
 
 	/**
@@ -187,7 +186,6 @@ class WC_Not_Sold_Separately {
 		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, true ); ?> /> <?php esc_html_e( 'Not sold separately', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ); ?>" href="#">[?]</a></label>
 
 		<?php
-
 	}
 
 	/**
@@ -201,7 +199,6 @@ class WC_Not_Sold_Separately {
 	public static function save_product_variation( $variation, $i ) {
 		$not_sold_separately = wc_bool_to_string( isset( $_POST['not_sold_separately'][ $i ] ) );
 		$variation->update_meta_data( '_not_sold_separately', $not_sold_separately );
-
 	}
 
 
@@ -216,7 +213,7 @@ class WC_Not_Sold_Separately {
 	 * @param WC_Product $product Product object.
 	 * @return  bool
 	 */
-	public static function is_purchasable( $is_purchasable , $product ) {
+	public static function is_purchasable( $is_purchasable, $product ) {
 
 		if ( ! self::$cart_loading ) {
 
@@ -238,7 +235,7 @@ class WC_Not_Sold_Separately {
 	 * @param WC_Product_Variation $variation Product object.
 	 * @return  bool
 	 */
-	public static function is_visible( $is_visible , $variation_id, $parent_id, $variation ) {
+	public static function is_visible( $is_visible, $variation_id, $parent_id, $variation ) {
 		if ( self::is_not_sold_separately( $variation ) && ! self::is_in_bundled_context( $variation ) ) { 
 			$is_visible = false;
 		}
@@ -333,7 +330,6 @@ class WC_Not_Sold_Separately {
 		}
 
 		return $product instanceof WC_Product && wc_string_to_bool( $product->get_meta( '_not_sold_separately', true, $context ) );
-
 	}
 
 	/**
@@ -380,7 +376,7 @@ class WC_Not_Sold_Separately {
 
 		$is_in_bundled_cart_context = false;
 		
-		foreach( self::$bundled_cart_fn as $fn ) {
+		foreach ( self::$bundled_cart_fn as $fn ) {
 			if ( $fn( $cart_item ) ) {
 				$is_in_bundled_cart_context = true;
 				break;
@@ -397,6 +393,5 @@ class WC_Not_Sold_Separately {
 		 */
 		return (bool) apply_filters( 'wc_not_sold_separately_is_in_bundled_cart_context', $is_in_bundled_cart_context, $cart_item );
 	}
-
 }
 add_action( 'plugins_loaded', array( 'WC_Not_Sold_Separately', 'init' ), 20 );
