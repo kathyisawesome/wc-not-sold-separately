@@ -23,6 +23,10 @@
             "phpcs": "Analyze code against the WordPress coding standards with PHP_CodeSniffer",
             "phpcb": "Fix coding standards warnings/errors automatically with PHP Code Beautifier"
       }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
-  }
-  
+}
