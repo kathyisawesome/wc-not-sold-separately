@@ -109,7 +109,7 @@ class WC_Not_Sold_Separately {
 	 *
 	 * @since  2.2.0
 	 */
-	public function load_plugin_textdomain() {
+	public static function load_plugin_textdomain() {
 		load_plugin_textdomain( 'wc-not-sold-separately', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
