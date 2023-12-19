@@ -7,7 +7,7 @@
 * Author: Kathy Darling
 * Author URI: http://kathyisawesome.com/
 *
-* Text Domain: not-sold-separately-for-woocommerce
+* Text Domain: wc-not-sold-separately
 * Domain Path: /languages/
 *
 * GitHub Plugin URI: kathyisawesome/wc-not-sold-separately
@@ -95,7 +95,29 @@ class WC_Not_Sold_Separately {
 		if ( ! empty( self::$bundled_props ) ) {
 			self::add_hooks();
 		}
+
+		// Load translation files.
+		add_action( 'init', array( __CLASS__, 'load_plugin_textdomain' ) );
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Localization.
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * Make the plugin translation ready.
+	 *
+	 * Translations should be added in the WordPress language directory:
+	 *      - WP_LANG_DIR/plugins/woocommerce-mix-and-match-products-LOCALE.mo
+	 *
+	 * @since  2.2.0
+	 */
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( 'wc-not-sold-separately', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
+
 
 	/**
 	 * Hooks for plugin support.
@@ -143,10 +165,10 @@ class WC_Not_Sold_Separately {
 		// Not sold separately meta.
 		woocommerce_wp_checkbox( array(
 			'id'          => '_not_sold_separately',
-			'label'       => __( 'Not sold separately', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ),
+			'label'       => esc_html__( 'Not sold separately', 'wc-not-sold-separately' ),
 			'wrapper_class' => 'show_if_simple show_if_variable',
 			'value'       => self::is_not_sold_separately( $product_object, 'edit' ) ? 'yes' : 'no',
-			'description' => __( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ),
+			'description' => esc_html__( 'Enable this if this product should only be sold as part of a bundle.', 'wc-not-sold-separately' ),
 		) );
 	}
 
@@ -183,7 +205,7 @@ class WC_Not_Sold_Separately {
 		$not_sold_separately = self::is_not_sold_separately( $variation->ID, 'edit' );
 		?>
 
-		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, true ); ?> /> <?php esc_html_e( 'Not sold separately', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ); ?>" href="#">[?]</a></label>
+		<label><input type="checkbox" class="checkbox not_sold_separately" name="not_sold_separately[<?php echo esc_attr( $loop ); ?>]" <?php checked( $not_sold_separately, true ); ?> /> <?php esc_html_e( 'Not sold separately', 'wc-not-sold-separately' ); ?> <a class="tips" data-tip="<?php esc_attr_e( 'Enable this if this product should only be sold as part of a bundle.', 'wc-not-sold-separately' ); ?>" href="#">[?]</a></label>
 
 		<?php
 	}
@@ -271,7 +293,7 @@ class WC_Not_Sold_Separately {
 	public static function product_cannot_be_purchased_message( $message, $product ) {
 		if ( self::is_not_sold_separately( $product ) ) {
 			// Translators: %s is the name of the product being added to the cart.
-			$message = sprintf( __( 'Sorry, %s is not sold separately.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ), $product->get_name() );
+			$message = sprintf( esc_html__( 'Sorry, %s is not sold separately.', 'wc-not-sold-separately' ), $product->get_name() );
 		}
 		return $message;
 	}
@@ -297,7 +319,7 @@ class WC_Not_Sold_Separately {
 		
 			if ( $remove ) {
 				/* translators: %s: product name */
-				$message = sprintf( __( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'not-sold-separately-for-woocommerce', 'wc-not-sold-separately' ), $product->get_name() );
+				$message = sprintf( esc_html__( '%s has been removed from your cart because it cannot be purchased separately. Please contact us if you need assistance.', 'wc-not-sold-separately' ), $product->get_name() );
 				/**
 				 * Filter message about item removed from the cart.
 				 *
