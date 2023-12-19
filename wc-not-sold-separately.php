@@ -81,11 +81,6 @@ class WC_Not_Sold_Separately {
 			self::$bundled_cart_fn[] = 'wc_pb_is_bundled_cart_item';
 		}
 
-		// Composites.
-		if ( class_exists( 'WC_Composite_Products' ) ) {
-
-		}
-
 		// Mix and Match.
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
 			self::$bundled_props[]   = 'mnm_child_item';
@@ -182,6 +177,7 @@ class WC_Not_Sold_Separately {
 
 		if ( $product->is_type( array( 'simple', 'variable' ) ) ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( isset( $_POST['_not_sold_separately'] ) ) {
 				$product->update_meta_data( '_not_sold_separately', 'yes' );
 			} else {
@@ -219,6 +215,7 @@ class WC_Not_Sold_Separately {
 	 * @param int $i
 	 */
 	public static function save_product_variation( $variation, $i ) {
+		// phpcs:disable WordPress.Security.NonceVerification
 		$not_sold_separately = wc_bool_to_string( isset( $_POST['not_sold_separately'][ $i ] ) );
 		$variation->update_meta_data( '_not_sold_separately', $not_sold_separately );
 	}
