@@ -233,7 +233,7 @@ class WC_Not_Sold_Separately {
 	 */
 	public static function is_purchasable( $is_purchasable, $product ) {
 
-		if ( ! self::$cart_loading ) {
+		if ( ! self::is_cart_loading() ) {
 
 			if ( ! $product->get_parent_id() && self::is_not_sold_separately( $product ) && ! self::is_in_bundled_context( $product ) ) {
 				$is_purchasable = false;
@@ -255,7 +255,7 @@ class WC_Not_Sold_Separately {
 	 */
 	public static function is_visible( $is_visible, $variation_id, $parent_id, $variation ) {
 
-		if ( ! self::$cart_loading ) {
+		if ( ! self::is_cart_loading() ) {
 		
 			if ( self::is_not_sold_separately( $variation ) && ! self::is_in_bundled_context( $variation ) ) { 
 				$is_visible = false;
@@ -337,6 +337,16 @@ class WC_Not_Sold_Separately {
 	/*-----------------------------------------------------------------------------------*/
 	/* Helpers                                                                           */
 	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Is cart loading?
+	 * 
+	 * @since 2.3.0
+	 * @return bool
+	 */
+	public static function is_cart_loading() {
+		return true === self::$cart_loading;
+	}
 
 	/**
 	 * Test if the product is part of a bundle.
