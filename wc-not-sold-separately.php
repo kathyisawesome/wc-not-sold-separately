@@ -17,7 +17,7 @@
 * Requires at least: 5.6.0
 * Tested up to: 6.0.0
 *
-* WC requires at least: 6.0.0
+* WC requires at least: 7.0.0
 * WC tested up to: 6.6.0
 *
 * Copyright: © 2020 Kathy Darling
