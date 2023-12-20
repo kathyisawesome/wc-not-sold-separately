@@ -128,7 +128,6 @@ class WC_Not_Sold_Separately {
 
 		// Manipulate product availability.
 		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
-		add_filter( 'woocommerce_variation_is_purchasable', array( __CLASS__, 'is_purchasable' ), 99, 2 );
 		add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		
 		// Remove is_purchasable filter in cart session.
