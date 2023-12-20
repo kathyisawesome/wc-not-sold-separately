@@ -131,10 +131,10 @@ class WC_Not_Sold_Separately {
 		add_filter( 'woocommerce_variation_is_visible', array( __CLASS__, 'is_visible' ), 99, 4 );
 		
 		// Remove is_purchasable filter in cart session.
-		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'remove_is_purchasable' ) );
+		add_action( 'woocommerce_load_cart_from_session', array( __CLASS__, 'set_cart_loading' ) );
 
 		// Restore is_purchasable filter after cart loaded.
-		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'restore_is_purchasable' ) );
+		add_action( 'woocommerce_cart_loaded_from_session', array( __CLASS__, 'remove_cart_loading' ) );
 
 		// Change add to cart validation error.
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', array( __CLASS__, 'product_cannot_be_purchased_message' ), 10, 2 );  
@@ -271,14 +271,14 @@ class WC_Not_Sold_Separately {
 	/**
 	 * Set flag to bypass is_purchasable filter while loading the cart from session.
 	 */
-	public static function remove_is_purchasable() {
+	public static function set_cart_loading() {
 		self::$cart_loading = true;
 	}
 
 	/**
 	 * Reset cart loading flag.
 	 */
-	public static function restore_is_purchasable() {
+	public static function remove_cart_loading() {
 		self::$cart_loading = false;
 	}
 
