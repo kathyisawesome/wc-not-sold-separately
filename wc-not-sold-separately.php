@@ -254,8 +254,12 @@ class WC_Not_Sold_Separately {
 	 * @return  bool
 	 */
 	public static function is_visible( $is_visible, $variation_id, $parent_id, $variation ) {
-		if ( self::is_not_sold_separately( $variation ) && ! self::is_in_bundled_context( $variation ) ) { 
-			$is_visible = false;
+
+		if ( ! self::$cart_loading ) {
+		
+			if ( self::is_not_sold_separately( $variation ) && ! self::is_in_bundled_context( $variation ) ) { 
+				$is_visible = false;
+			}
 		}
 		return $is_visible;
 	}
